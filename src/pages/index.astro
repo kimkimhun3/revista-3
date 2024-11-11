@@ -1,0 +1,88 @@
+---
+import Homepage from "../components/Homepage.astro";
+const { pageTitle } = Astro.props;
+import { getCollection } from "astro:content";
+import { getImage } from "astro:assets";
+
+const collections = ["realm"];
+let allImages = { large: [], medium: [], small: [] };
+let allAlts = [];
+let allUrls = [];
+let selectedPost; // To hold the randomly selected post
+
+for (let collection of collections) {
+  const allContent = await getCollection(collection);
+  const postsWithImages = allContent.filter(
+    (post) => post.data.image?.src && post.data.image?.alt,
+  );
+
+  // Select a random post if available
+  if (postsWithImages.length > 0) {
+    selectedPost = postsWithImages[Math.floor(Math.random() * postsWithImages.length)];
+    
+    const [largeImage, mediumImage, smallImage] = await Promise.all([
+      getImage({
+        src: selectedPost.data.image.src,
+        alt: selectedPost.data.image.alt,
+        width: 1920,
+        height: 1080,
+        decoding: "async",
+        format: "avif",
+        quality: 65,
+      }),
+      getImage({
+        src: selectedPost.data.image.src,
+        alt: selectedPost.data.image.alt,
+        width: 1280,
+        height: 720,
+        decoding: "async",
+        format: "avif",
+        quality: 65,
+      }),
+      getImage({
+        src: selectedPost.data.image.src,
+        alt: selectedPost.data.image.alt,
+        width: 854,
+        height: 480,
+        decoding: "async",
+        format: "avif",
+        quality: 65,
+      }),
+    ]);
+
+    // Push the images to the respective arrays
+    allImages.large.push(largeImage.src);
+    allImages.medium.push(mediumImage.src);
+    allImages.small.push(smallImage.src);
+    allAlts.push(selectedPost.data.image.alt);
+    allUrls.push(`/${collection}/${selectedPost.slug}`);
+  }
+}
+
+const imageSizes = {
+  width: {
+    large: 1920,
+    medium: 1280,
+    small: 854,
+  },
+  height: {
+    large: 1080,
+    medium: 720,
+    small: 480,
+  },
+};
+---
+
+{selectedPost ? (
+  <Homepage
+    title={selectedPost.data.title || "No Title"} // Provide a fallback
+    author={selectedPost.data.author}
+    images={JSON.stringify(allImages)}
+    alt={JSON.stringify(allAlts)}
+    urls={JSON.stringify(allUrls)}
+    width={imageSizes.width}
+    height={imageSizes.height}
+  />
+) : (
+  <p>No images found</p>
+)}

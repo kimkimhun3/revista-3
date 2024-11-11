@@ -1,0 +1,182 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Prose from "../components/Prose.astro";
+
+const pageTitle = "Contact Us";
+const subTitle = "We'd Love to Hear from You";
+const question = "Got a question, an idea, or simply want to say hello?";
+const message = "Fill out the form below, and let's connect! Whether you're looking for recommendations, curious about our latest adventures, or have a place in mind that you'd like me to explore, i'm ears. Your input could inspire my next journey!";
+
+---
+
+<BaseLayout title={pageTitle}>
+  <Prose>
+    <div class="space-y-8 py-8">
+      <header class="text-center space-y-4">
+        <h1
+          class="font-overpass-mono text-4xl text-gray-900 dark:text-[rgb(245,245,245)]"
+        >
+          {pageTitle}
+        </h1>
+        <div class="space-y-2">
+          <h2
+            class="font-overpass-mono text-2xl text-gray-700 dark:text-gray-300"
+          >
+            {subTitle}
+          </h2>
+          <p
+            class="font-overpass-mono text-sm italic text-gray-500 dark:text-gray-400"
+          >
+            {question}
+          </p>
+          <p
+            class="font-overpass-mono text-sm text-gray-500 dark:text-gray-400 mt-4"
+          >
+            {message}
+          </p>
+        </div>
+      </header>
+
+      <div
+        class="bg-gray-100 dark:bg-[rgb(40,39,43)] rounded-lg p-6 shadow-[inset_0_4px_6px_-1px_rgba(0,0,0,0.1),inset_0_2px_4px_-1px_rgba(0,0,0,0.06)] dark:shadow-[inset_0_4px_6px_-1px_rgba(0,0,0,0.3),inset_0_2px_4px_-1px_rgba(0,0,0,0.18)]"
+      >
+        <form
+          action="https://api.web3forms.com/submit"
+          method="POST"
+          id="form"
+          class="space-y-4 needs-validation"
+          novalidate
+        >
+          <input type="hidden" name="access_key" value="c232a0ce-61cd-489b-9c16-6943fc5135b3" />
+          <input type="checkbox" class="hidden" style="display:none" name="botcheck" />
+          <label class="block">
+            <span class="font-overpass-mono text-gray-800 dark:text-[rgb(230,230,230)]">Name:</span>
+            <input
+              type="text" 
+              name="name" 
+              required
+              class="w-full mt-1 p-2 bg-white dark:bg-gray-900 rounded border border-gray-300 dark:border-gray-600"
+            />
+            <div class="empty-feedback invalid-feedback text-red-400 text-sm mt-1">
+              Please provide your full name.
+            </div>
+          </label>
+          <label class="block">
+            <span class="font-overpass-mono text-gray-800 dark:text-[rgb(230,230,230)]">Email:</span>
+            <input
+              type="email" 
+              name="email" 
+              required
+              class="w-full mt-1 p-2 bg-white dark:bg-gray-900 rounded border border-gray-300 dark:border-gray-600"
+            />
+            <div class="empty-feedback text-red-400 text-sm mt-1">
+              Please provide your email address.
+            </div>
+            <div class="invalid-feedback text-red-400 text-sm mt-1">
+              Please provide a valid email address.
+            </div>
+          </label>
+          <label class="block">
+            <span class="font-overpass-mono text-gray-800 dark:text-[rgb(230,230,230)]">Message:</span>
+            <textarea
+              name="message" 
+              required
+              class="w-full mt-1 p-2 bg-white dark:bg-gray-900 rounded border border-gray-300 dark:border-gray-600"
+            ></textarea>
+            <div class="empty-feedback invalid-feedback text-red-400 text-sm mt-1">
+              Please enter your message.
+            </div>
+          </label>
+          <button
+            type="submit"
+            class="bg-blue-600 hover:bg-blue-700 dark:bg-blue-800 dark:hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out"
+          >
+            Send Message
+          </button>
+          <div id="result" class="mt-3 text-center"></div>
+        </form>
+      </div>
+
+      <div class="flex justify-center mt-6">
+        <a
+          href="/"
+          class="bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-800 dark:hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded inline-block no-underline transition duration-300 ease-in-out text-center"
+          data-astro-reload
+        >
+          Return to Home
+        </a>
+      </div>
+    </div>
+  </Prose>
+</BaseLayout>
+
+<style>
+  .invalid-feedback,
+  .empty-feedback {
+    display: none;
+  }
+
+  .was-validated :placeholder-shown:invalid ~ .empty-feedback {
+    display: block;
+  }
+
+  .was-validated :not(:placeholder-shown):invalid ~ .invalid-feedback {
+    display: block;
+  }
+
+  .is-invalid,
+  .was-validated :invalid,
+  .was-validated :invalid:focus {
+    border-color: #dc3545;
+  }
+</style>
+
+<script is:inline>
+const form = document.getElementById("form");
+const result = document.getElementById("result");
+
+form.addEventListener("submit", function (e) {
+  e.preventDefault();
+  form.classList.add("was-validated");
+  if (!form.checkValidity()) {
+    form.querySelectorAll(":invalid")[0].focus();
+    return;
+  }
+  const formData = new FormData(form);
+  const object = Object.fromEntries(formData);
+  const json = JSON.stringify(object);
+
+  result.innerHTML = "Sending...";
+
+  fetch("https://api.web3forms.com/submit", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+    },
+    body: json,
+  })
+    .then(async (response) => {
+      let json = await response.json();
+      if (response.status == 200) {
+        result.classList.add("text-green-500");
+        result.innerHTML = json.message;
+      } else {
+        console.log(response);
+        result.classList.add("text-red-500");
+        result.innerHTML = json.message;
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+      result.innerHTML = "Something went wrong!";
+    })
+    .then(function () {
+      form.reset();
+      form.classList.remove("was-validated");
+      setTimeout(() => {
+        result.style.display = "none";
+      }, 5000);
+    });
+});
+</script>
