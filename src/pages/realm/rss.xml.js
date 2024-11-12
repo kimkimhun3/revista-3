@@ -8,8 +8,8 @@ export async function GET(context) {
   const realm = await getCollection('realm');
   return rss({
     stylesheet: '/rss/rss.xsl',
-    title: 'stoicopa',
-    description: 'My personal hamster wheel.',
+    title: 'hoon',
+    description: 'My personal realm.',
     site: context.site,
     items: realm.map((post) => ({
       title: post.data.title,
