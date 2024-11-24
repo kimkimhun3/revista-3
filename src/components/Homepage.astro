@@ -1,6 +1,6 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-const { title, images, alt, urls, width, height, author } = Astro.props;
+const { title, images, alt, urls, width, height } = Astro.props;
 ---
 
 <BaseLayout title={title} is404Page={false}>
@@ -8,6 +8,7 @@ const { title, images, alt, urls, width, height, author } = Astro.props;
     id="homepage"
     class="flex flex-col justify-center items-center"
     data-images={images}
+    title={title}
     data-alt={alt}
     data-urls={urls}
     data-width={JSON.stringify(width)}
@@ -24,9 +25,10 @@ const { title, images, alt, urls, width, height, author } = Astro.props;
           alt=""
           data-srcset-small
         />
+        
       </picture>
-      <h1 class="mt-4 text-center normal-case font-overpass-mono  text-4xl -mb-1 font-semibold">"{title}" by {author}</h1> <!-- Make sure this line is executed -->
     </a>
+    <!-- <h1 class="mt-2 text-center normal-case font-overpass-mono mb-1 font-semibold">{urls} by</h1> -->
     <slot />
   </div>
 </BaseLayout>

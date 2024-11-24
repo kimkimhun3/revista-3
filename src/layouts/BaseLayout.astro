@@ -26,7 +26,7 @@ const favicon_webp = await getImage({
   loading: "lazy",
 });
 
-const pageTitle = "Hoon";
+
 const metaDescription = "My personal realm.";
 const {
   image,
@@ -39,6 +39,7 @@ const {
   alt,
   is404Page = false,
 } = Astro.props;
+const pageTitle = "Hoon";
 ---
 
 <html class="bg-[rgb(244,242,238)] dark:bg-[rgb(34,33,37)]" lang="en">
@@ -74,6 +75,35 @@ const {
     <title>{pageTitle}</title>
     <ViewTransitions />
   </head>
+  <script>
+    // Import the functions you need from the SDKs you need
+    import { getAnalytics } from "firebase/analytics";
+    import { initializeApp } from "firebase/app";
+  // TODO: Add SDKs for Firebase products that you want to use
+  // https://firebase.google.com/docs/web/setup#available-libraries
+
+  // Your web app's Firebase configuration
+  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+  const firebaseConfig = {
+    apiKey: "AIzaSyBbhKxwhZFGVoTDw3qF301LZZgcwXNT2HU",
+    authDomain: "realm-5acf4.firebaseapp.com",
+    projectId: "realm-5acf4",
+    storageBucket: "realm-5acf4.firebasestorage.app",
+    messagingSenderId: "92930222172",
+    appId: "1:92930222172:web:380cd3bf73f13fe17f1e99",
+    measurementId: "G-F3KQ42560J"
+  };
+
+  // Initialize Firebase
+  // Initialize Firebase
+  let analytics;
+  if (typeof window !== "undefined") {
+    const app = initializeApp(firebaseConfig);
+    analytics = getAnalytics(app);
+  }
+
+  export { analytics };
+  </script>
   <body
     class="flex flex-col flex-wrap justify-between md:pt-8 md:pr-16 md:pb-8 md:pl-16 p-8 max-w-full min-h-screen dark:bg-[rgb(34,33,37)] dark:text-[rgb(245,245,245)]"
   >

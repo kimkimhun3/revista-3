@@ -11,16 +11,16 @@ import react from "@astrojs/react";
 import pagefind from "astro-pagefind";
 // https://astro.build/config
 export default defineConfig({
-  site: "https://www.erfianugrah.com",
-  image: {
-    domains: ["erfianugrah.com", "cdn.erfianugrah.com"],
-    service: {
-      entrypoint: "astro/assets/services/sharp",
-      config: {
-        limitInputPixels: false,
-      },
-    },
-  },
+  site: "https://realm-5acf4.web.app",
+  // image: {
+  //   //domains: ["erfianugrah.com", "cdn.erfianugrah.com"],
+  //   service: {
+  //     entrypoint: "astro/assets/services/sharp",
+  //     config: {
+  //       limitInputPixels: false,
+  //     },
+  //   },
+  // },
   integrations: [
     icon(),
     sitemap(),
