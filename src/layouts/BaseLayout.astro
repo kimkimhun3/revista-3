@@ -4,8 +4,11 @@ import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
 import "@fontsource-variable/overpass-mono";
 import "@fontsource-variable/inconsolata";
+import { SEO } from "astro-seo";
 import { getImage } from "astro:assets";
+
 let baseUrl = new URL(Astro.request.url).origin;
+
 const metaImage = await getImage({
   src: "https://res.cloudinary.com/djh8z83mc/image/upload/last_logo1_brbdkg.png",
   alt: "cover_image",
@@ -26,22 +29,24 @@ const favicon_webp = await getImage({
   loading: "lazy",
 });
 
-
 const metaDescription = "My personal realm.";
 const {
-  image,
-  description,
-  author,
+  image = `${baseUrl}${metaImage?.src}`,  // Default image if not specified
+  description = metaDescription,
+  author = "Kimhoon Rin",
   pubDate,
   updatedDate,
-  title,
-  site_name,
-  alt,
+  title = "Hoon",
+  site_name = "Hoon",
+  alt = "cover_image",
   is404Page = false,
 } = Astro.props;
-const pageTitle = "Hoon";
+
+const canonicalURL = new URL(Astro.url.pathname, Astro.site).toString();
+const makeTitle = title ? `${title} | Hoon` : "Hoon";
 ---
 
+<!DOCTYPE html>
 <html class="bg-[rgb(244,242,238)] dark:bg-[rgb(34,33,37)]" lang="en">
   <head>
     <meta charset="utf-8" />
@@ -49,61 +54,56 @@ const pageTitle = "Hoon";
     <link rel="sitemap" href="/sitemap-index.xml" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="generator" content={Astro.generator} />
-    <meta name="og:title" content={title || pageTitle} />
-    <meta name="og:description" content={description || metaDescription} />
-    <meta name="description" content={description || metaDescription} />
-    <meta property="og:type" content="website" />
-    <meta property="og:site_name" content={site_name || "hoon"} />
-    <meta name="og:image" content={image || `${baseUrl}${metaImage?.src}`} />
-    <meta name="article:author" content={author || "Erfi Anugrah"} />
-    <meta name="article:published_time" content={pubDate} />
-    <meta name="article:modified_time" content={updatedDate} />
-    <meta name="og:url" content={Astro.url} />
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta property="twitter:domain" content={Astro.site} />
-    <meta property="twitter:url" content={Astro.url} />
-    <meta
-      name="twitter:card"
-      content={image || `${baseUrl}${metaImage?.src}`}
+
+    <SEO
+      title={makeTitle}
+      description={description}
+      canonical={canonicalURL}
+      twitter={{
+        creator: "@hooon",
+        site: "@hooon",
+        card: "summary_large_image",
+        image: image,  // Using the image from the MDX frontmatter
+      }}
+      openGraph={{
+        basic: {
+          url: canonicalURL,
+          type: "website",
+          title: makeTitle,
+          image: image,  // Using the image from the MDX frontmatter
+        },
+        image: {
+          alt: alt,  // Alt text for the image
+        },
+      }}
     />
-    <meta name="twitter:title" content={title || pageTitle} />
-    <meta name="twitter:description" content={description || metaDescription} />
-    <meta
-      name="twitter:image"
-      content={image || `${baseUrl}${metaImage?.src}`}
-    />
-    <title>{pageTitle}</title>
+
     <ViewTransitions />
+
+    <script>
+      // Firebase initialization script
+      import { getAnalytics } from "firebase/analytics";
+      import { initializeApp } from "firebase/app";
+
+      const firebaseConfig = {
+        apiKey: "AIzaSyBbhKxwhZFGVoTDw3qF301LZZgcwXNT2HU",
+        authDomain: "realm-5acf4.firebaseapp.com",
+        projectId: "realm-5acf4",
+        storageBucket: "realm-5acf4.firebasestorage.app",
+        messagingSenderId: "92930222172",
+        appId: "1:92930222172:web:380cd3bf73f13fe17f1e99",
+        measurementId: "G-F3KQ42560J",
+      };
+
+      let analytics;
+      if (typeof window !== "undefined") {
+        const app = initializeApp(firebaseConfig);
+        analytics = getAnalytics(app);
+      }
+
+      export { analytics };
+    </script>
   </head>
-  <script>
-    // Import the functions you need from the SDKs you need
-    import { getAnalytics } from "firebase/analytics";
-    import { initializeApp } from "firebase/app";
-  // TODO: Add SDKs for Firebase products that you want to use
-  // https://firebase.google.com/docs/web/setup#available-libraries
-
-  // Your web app's Firebase configuration
-  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-  const firebaseConfig = {
-    apiKey: "AIzaSyBbhKxwhZFGVoTDw3qF301LZZgcwXNT2HU",
-    authDomain: "realm-5acf4.firebaseapp.com",
-    projectId: "realm-5acf4",
-    storageBucket: "realm-5acf4.firebasestorage.app",
-    messagingSenderId: "92930222172",
-    appId: "1:92930222172:web:380cd3bf73f13fe17f1e99",
-    measurementId: "G-F3KQ42560J"
-  };
-
-  // Initialize Firebase
-  // Initialize Firebase
-  let analytics;
-  if (typeof window !== "undefined") {
-    const app = initializeApp(firebaseConfig);
-    analytics = getAnalytics(app);
-  }
-
-  export { analytics };
-  </script>
   <body
     class="flex flex-col flex-wrap justify-between md:pt-8 md:pr-16 md:pb-8 md:pl-16 p-8 max-w-full min-h-screen dark:bg-[rgb(34,33,37)] dark:text-[rgb(245,245,245)]"
   >
@@ -112,6 +112,7 @@ const pageTitle = "Hoon";
     <Footer />
   </body>
 </html>
+
 <style is:global>
   .astro-code,
   .astro-code span {
